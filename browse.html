@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<link href='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.css' rel='stylesheet' />
+		<link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/codemirror.min.css' rel='stylesheet' />
+		<link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/theme/monokai.min.css' rel='stylesheet' />
+		<link rel="stylesheet" href="https://jqueryui.com/jquery-wp-content/themes/jqueryui.com/style.css">
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<!-- <link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/addon/scroll/simplescrollbars.min.css' rel='stylesheet' /> -->
+		<link rel='stylesheet' type='text/css' href='./index.css'>
+		<script src="https://npmcdn.com/@turf/turf/turf.min.js"></script>
+		<script src='https://api.mapbox.com/mapbox-gl-js/v1.11.0/mapbox-gl.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/codemirror.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/keymap/sublime.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/mode/sql/sql.min.js'></script>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/addon/scroll/simplescrollbars.min.js'></script>
+		<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script></script>
+		<style>
+
+.ui-tabs {
+			height: 100% !important;
+			width: 90% !important;
+}
+
+.ui-tabs .ui-tabs-panel {
+			height: 90% !important;
+			width: 100% !important;
+			padding: 0px 5px 0px 0px !important;
+}
+
+.ui-tabs .ui-tabs-nav {
+			padding: unset !important;
+}
+
+.ui-tabs-widget-content {
+			min-height: 90% !important;
+			width: 100% !important;
+			border: 1px !important;
+			border-color: #333 !important;
+}
+
+.ui-widget-content {
+			background: hsl(185, 2%, 10%) !important;
+			color: lightgrey !important;
+			border: unset !important;
+			margin-right: 15px !important;
+}
+
+.ui-widget-header {
+			background: hsl(185, 2%, 10%) !important;
+			border: unset !important;
+}
+
+.propTab td{
+	border: unset;
+	padding: 0;
+}
+
+.propTab small{
+	color: #5e5353  !important;
+}
+
+.propTab strong{
+	color: black  !important;
+}
+
+		</style>
+	</head>
+	<body>
+		<div id='app'>
+			<header>
+				<p id='title'>
+					<a href='https://github.com/jvail/spatiasql.js'>spatiasql.js</a>
+					 - query sample db or choose a file
+					 (<a href='https://www.gaia-gis.it/fossil/libspatialite/index'>SpatiaLite</a>
+					 or
+					 <a href='http://www.geopackage.org/#sampledata'>GeoPackage</a>).</p>
+			</header>
+			<div id='main'>
+				<div id='control'>
+					<div id='panel'>
+						<button id='listtables'>elenco tabelle</button>
+						<button id='run'>esegui query</button>
+						<input id='file' type='file'/>
+						<span id='error'></span>
+						<span id='numrows'></span>
+						<span id='time'></span>
+					</div>
+
+					<div id='editor'>
+						<textarea id='code' name='code'>
+/*
+You can draw a geometry on the map by including 'geojson' in a column name.
+click on "run query" to see sample result
+*/
+
+SELECT comune,AsGeoJSON(geom) AS geojson
+FROM comuni
+						</textarea>
+					</div>
+				</div>
+
+
+				<div id="tabs">
+				  <ul>
+				    <li><a id="m_tab" href="#map_panel">MAPPA</a></li>
+				    <li><a id="t_tab" href="#table_panel">TABELLA</a></li>
+				  </ul>
+				  <div id="map_panel">
+				    <div id='map'></div>
+				  </div>
+				  <div id="table_panel">
+						<div id='tbl'></div>
+				  </div>
+				</div>
+			</div>
+		</div>
+		<script>
+	  $( function() {
+	    $( "#tabs" ).tabs();
+	  } );
+	  </script>
+		<script src='./index.js'></script>
+	</body>
+
+</html>

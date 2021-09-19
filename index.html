@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta name="viewport" content="width=1024, user-scalable=no">
+  <meta name="author" content="Enrico Ferreguti - enricofer@gmail.com">
+  <meta name="venue" content="GFOSS 2021">
+  <meta name="date" content="20/9/2021">
+
+  <title>Geoprocessing in SQL</title>
+
+  <!-- Required stylesheet -->
+  <link rel="stylesheet" media="screen" href="core/deck.core.css">
+
+  <!-- Extension CSS files go here. Remove or add as needed. -->
+  <link rel="stylesheet" media="screen" href="extensions/goto/deck.goto.css">
+  <link rel="stylesheet" media="screen" href="extensions/menu/deck.menu.css">
+  <link rel="stylesheet" media="screen" href="extensions/navigation/deck.navigation.css">
+  <link rel="stylesheet" media="screen" href="extensions/status/deck.status.css">
+  <link rel="stylesheet" media="screen" href="extensions/scale/deck.scale.css">
+
+  <!-- Style theme. More available in /themes/style/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="themes/style/swiss.css">
+
+  <!-- Transition theme. More available in /themes/transition/ or create your own. -->
+  <link rel="stylesheet" media="screen" href="themes/transition/horizontal-slide.css">
+
+  <!-- Basic black and white print styles -->
+  <link rel="stylesheet" media="print" href="core/print.css">
+
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/codemirror.min.css' rel='stylesheet' />
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/theme/duotone-light.min.css' rel='stylesheet' />
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/theme/monokai.min.css' rel='stylesheet' />
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/theme/base16-light.min.css' rel='stylesheet' />
+        <link href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/theme/neat.min.css' rel='stylesheet' />
+
+        <style>
+
+            .editor {
+                width: 100%;
+                margin-bottom: 15px !important;
+            }
+
+            .wrapper {
+                display:inline-block;
+                position:relative;
+            }
+
+            .wrapper .hidden {
+                display:none;
+            }
+
+            .wrapper button{
+             position:absolute;
+             top:4px;
+             right:4px;
+             z-index: 100;
+             height: 25px;
+             width: 25px;
+             background-image: url(img/play-icon.png);
+             background-repeat: no-repeat;
+             background-position: center;
+             background-size: cover;
+            }
+
+            .CodeMirror {
+                height: auto;
+                font-family: Courier, monospace !important;
+                font-size: 20px !important;
+                font-weight: 700 !important;
+                background-color: #eee
+            }
+
+        </style>
+
+  <!-- Required Modernizr file -->
+  <script src="modernizr.custom.js"></script>
+</head>
+<body>
+  <div class="deck-container">
+
+    <!-- Begin slides. Just make elements with a class of slide. -->
+
+    <section class="slide">
+      <h2>INTRODUZIONE AI DATABASE GEOSPAZIALI</h2>
+      <h2>https://enricofer.github.io/spatial_sql_workshop/</h2>
+      <h3>GFOSS 2021</h3>
+      <p><a href="https://creativecommons.org/licenses/by-sa/3.0/it/">(C)2020 CC-BY-SA</a></br>Rocco Pispico r.pispico@gmail.com</br>Luca Lanteri lklanteri@gmail.com</br>Enrico Ferreguti enricofer@gmail.com</p>
+    </section>
+
+    <section class="slide">
+      <h1>Esercitazione guidata</h1>
+    </section>
+
+    <section class="slide">
+      <h2>SINTASSI SQL</h2>
+      <p>In linguaggio SQL sono possibili parecchi tipi di Query:</p>
+      <p>query di creazione tabella:</p>
+      <div class ='wrapper editor'>
+      <textarea class="code" id='code1' name='code'>
+CREATE TABLE tab(id INT PRIMARY KEY NOT NULL, campo1 CHAR(50), campo2 INT);
+      </textarea>
+      <button class="hidden"></button>
+      </div>
+      <p>query di inserimento dati:</p>
+      <div class ='wrapper editor'>
+      <textarea class="code" id='code2' name='code'>
+INSERT INTO tab (id, campo1, campo2) VALUES (1, 'valore 1', 120);
+      </textarea>
+      <button class="hidden"></button>
+      </div>
+      <p>query di cancellazione tabella:</p>
+      <div class ='wrapper editor'>
+      <textarea class="code" id='code3' name='code'>
+DROP TABLE tab;
+      </textarea>
+      <button class="hidden"></button>
+      </div>
+      <p>query di aggiornamento:</p>
+      <div class ='wrapper editor'>
+      <textarea class="code" id='code4' name='code'>
+UPDATE tab SET campo1 = 'valore2' WHERE id = 1;
+      </textarea>
+      <button class="hidden"></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>SQL SELECT</h2>
+      <p>ma quello che ci interessa oggi è la query di ricerca</p>
+      <div class ='wrapper editor'>
+      <textarea class="code" id='code4' name='code'>
+        SELECT id, campo1   -- prendi id e campo1
+        FROM tabella        -- da tabella
+        WHERE campo2 > 100; -- dalle righe che soddisfano una condizione</textarea>
+      <button class="hidden"></button>
+      </div>
+
+      <div class ='wrapper editor'>
+      <textarea class="code" id='code4' name='code'>
+        SELECT * 
+        FROM tabella -- elenca tutti i campi e tutte le righe di una tabella</textarea>
+      <button class="hidden"></button>
+      </div>
+      <p><br/>I dialetti SQL sono molti e ci sono grandi differenze di dettaglio.
+        Ma la struttura della sintassi principale per l'estrazione dei dati
+         rimane praticamente la stessa per tutti i RDBMS.<br/>
+       Oggi lavoreremo con SQlite, nella sua versione con estensioni spaziali
+       <a href="http://www.gaia-gis.it/gaia-sins/">Spatialite</a>
+       il cui sviluppo è open source ed è curato da
+       <a href="mailto:a.furieri@lqt.it">Alessandro Furieri</a></p>
+    </section>
+    
+    <section class="slide">
+      <h2>L'ambiente di lavoro del Workshop</h2>
+      <p>Per facilitare e velocizzare il workshop le esercitazioni sono completamente basate su un una versione speciale di Spatialite compilata per l'utilizzo da browser. Il database è residente nella memoria del browser,
+        ma è facilmente scaricabile per l'utilizzo con QGIS per chi lo desidera:<a href="data/piem.sqlite">dati esercitazione</a></p>
+      <p>E' possibile una visualizzazione tabellare:</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+      SELECT * FROM comuni</textarea>
+        <button></button>
+      </div>
+      <p>o una visualizzazione su mappa: Le tabelle contengono un campo *geom* con le informazioni spaziali memorizzate in latitudine e longitudine (WGS84 epsg:4326) e visualizzabili
+        producendo una geometria <a href="https://it.wikipedia.org/wiki/GeoJSON">geojson</a> per mezzo della funzione AsGeoJSON()<br/></p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+      SELECT *, AsGeoJSON(geom) AS geojson
+      FROM comuni</textarea>
+        <button></button>
+      </div>
+      <p>Il formato <a href="https://it.wikipedia.org/wiki/GeoJSON">geojson</a> è un formato testuale facilmente interpretabile da javascript come un'oggetto (dati serializzati) contentente dati geografici e relativi attributi.
+      Il formato è uno standard codificato di internet e costituisce una specie di lingua universale per l'interscambio di dati geografici nel web</p>
+    </section>
+
+    <section class="slide">
+      <h2>I dati dell’esercitazione</h2>
+	  <p>
+		Dati ISTAT (http://www.istat.it/it/archivio/104317)</br>
+		Limiti provinciali del Piemonte (province poligonale)</br>
+		Località abitate (localita poligonale)</br>
+		Tabella TIPO_LOC Tipologia di località 2001/2011. (tipo_localita.csv)</br>
+		Il campo può assumere i seguenti valori:</br>
+		1. centro abitato</br>
+		2. nucleo abitato</br>
+		3. località produttiva</br>
+		4. case sparse</br>
+		</br>
+		Da Geoportale Regione Piemonte (http://www.geoportale.piemonte.it/cms/)</br>
+		Limiti amministrativi comunali (comuni poligonale)</br>
+		Una selezione della viabilità principale (autostrade lineare)</br>
+		I dati sono disponibili in formato Shapefile e in Geopackage
+	  </p>
+    </section>
+    
+    <section class="slide">
+		<img src="img/dbmanager1.png" alt="DB manager">
+	</section>
+    
+    <section class="slide">
+		<h1>SELECT ... FROM ... WHERE ...</h1>
+	</section>
+
+    <section class="slide">
+      <h2>query di ricerca SELECT</h2>
+      <p>Disponiamo delle seguenti tabelle, visualizzabili eseguendo le query:</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT * FROM comuni     -- Confini comunali del Piemonte (geometrie poligonali)</textarea>
+        <button></button>
+      </div>
+
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT * FROM viab_princ     -- Viabilità principale (geometrie lineari)</textarea>
+        <button></button>
+      </div>
+
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT * FROM localita   -- Località ISTAT (geometrie poligonali)</textarea>
+        <button></button>
+      </div>
+
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT * FROM province      -- Province (geometrie poligonali)</textarea>
+        <button></button>
+      </div>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT * FROM tipo_localita     -- Tabella di decodifica tipo di località (senza geometria)</textarea>
+        <button></button>
+      </div>
+      <p>L'elenco delle tabelle e dei relativi campi disponibili può essere visualizzato in ogni momento premendo il bottone "elenco tabelle"</p>
+</section>
+
+    <section class="slide">
+      <h2>Esercitazione SELECT</h2>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+--ES 3
+SELECT 
+  t1.descrizione, 
+  localita.id, 
+  localita.geom, 
+  localita.loc2011, 
+  localita.pro_com, 
+  localita.tipo_loc, 
+  localita.popres as residenti,
+  localita.denominazi as nome
+FROM 
+  localita, 
+  tipo_localita as t1
+WHERE 
+  --cast(localita.tipo_loc as integer) = cast(t1.tipo_loc as integer)
+  localita.tipo_loc = t1.tipo_loc
+  --and popres > 20000
+--LIMIT 10
+		</textarea>
+        <button></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h1>FUNZIONI GEOSPAZIALI</h1>
+    </section>
+
+    <section class="slide">
+      <h2>Funzioni geometriche di Spatialite</h2>
+      <p>L'estensione spaziale di SQlite è Spatialite, e dispone di una serie molto completa di funzioni per la minipolazione di informazioni geografiche: <a href="http://www.gaia-gis.it/gaia-sins/spatialite-sql-4.2.0.html">Reference List</a></p>
+      <p>Le funzioni basilari che utilizzeremo nel workshop sono le seguenti</p>
+      <ul>
+        <li>condizioni topologiche (condizioni spaziali): dentro, fuori, contenuto da, coincidente etc...</li>
+        <li>manipolazione geometrica (aggregazione): unione, differenza, intersezione, buffer, generalizzazione</li>
+        <li>misurazione geometrica: lunghezza, area, distanza</li>
+        <li>estrazione geometrica: centroidi, linee di unione</li>
+        <li>trasformazioni: riproiezioni, conversioni di formati geometrici</li>
+      </ul>
+    </section>
+
+    <section class="slide">
+      <h2>Il campo geometria</h2>
+      <p>I <a href="https://www.gaia-gis.it/gaia-sins/spatialite-cookbook/html/wkt-wkb.html">tipi geometrici</a> possono essere i seguenti:</p>
+      <ul>
+        <li>geometria puntuale (POINT e MULTIPOINT)</li>
+        <li>geometria lineare (LINESTRING e MULTILINESTRING)</li>
+        <li>geometria poligonale (POLYGON e MULTIPOLYGON)</li>
+      </ul>
+      <p>L'informazione spaziale è contenuta in almeno un campo geometrico. Nelle tabelle del workshop il campo geografico è per convenzione il campo "geom", ma nulla vieta che possa avere un altro nome.<br/>Il formato di memorizzazione è binario, e quindi non visualizzabile "per gli umani" ma disponiamo di funzioni che permettono di trasformarlo in un formato più amichevole:</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT
+	geom,
+  ST_AsText(geom) AS wkt,
+  Hex(ST_AsBinary(geom)) AS wkb
+FROM localita</textarea>
+        <button></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>Esercitazione 4</h2>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+--ES 4
+SELECT 
+  l.id, 
+  ST_Centroid(l.geom) as geom,
+  asgeojson(ST_Centroid(l.geom)) as geojson,
+  l.loc2011 as codice_localita, 
+  l.pro_com as codice_comune, 
+  l.tipo_loc, 
+  tl.descrizione as desc_tipo_localita,   
+  l.denominazi as nome_localita,
+  l.popres as popolazione_residente,
+  l.maschi as maschi,
+  l.popres - l.maschi as femmine,
+  l.famiglie as numero_famiglie,
+  l.abitazioni as numero_abitazioni,
+  l.edifici as numero_edifici,
+  l.shape_area as superficie_in_mq
+FROM 
+  localita l, 
+  tipo_localita tl
+WHERE 
+  --localita.tipo_loc = t1.tipo_loc;
+  cast(l.tipo_loc as integer) = cast(tl.tipo_loc as integer)
+  limit 10;</textarea>
+        <button></button>
+      </div>
+      </section>
+
+    <section class="slide">
+      <h2>VISUALIZZAZIONE</h2>
+      <p>campi calcolati ed alias</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+select 
+ id, 
+ geom,
+ st_astext(geom) as wkt,
+ asgeojson(geom) as geojson
+from 
+  localita</textarea>
+        <button></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>ESERCITAZIONE 6 - Le subquery</h2>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+select 
+ c.id, c.comune, l.nome_localita, l.numero_famiglie, l.numero_abitazioni
+from 
+ comuni c, 
+ (
+	SELECT 
+	  l.id, 
+	  ST_Centroid(l.geom) as geom,
+	  asgeojson(ST_Centroid(l.geom)) as geojson,
+	  l.loc2011 as codice_localita, 
+	  l.pro_com as codice_comune, 
+	  l.tipo_loc, 
+	  tl.descrizione as desc_tipo_localita,   
+	  l.denominazi as nome_localita,
+	  l.popres as popolazione_residente,
+	  l.maschi as maschi,
+	  l.popres - l.maschi as femmine,
+	  l.famiglie as numero_famiglie,
+	  l.abitazioni as numero_abitazioni,
+	  l.edifici as numero_edifici,
+	  l.shape_area as superficie_in_mq
+	FROM 
+	  localita l, 
+	  tipo_localita tl
+	WHERE 
+	  --localita.tipo_loc = t1.tipo_loc;
+	  cast(l.tipo_loc as integer) = cast(tl.tipo_loc as integer)
+ ) as l
+where 
+ st_intersects(l.geom,c.geom)
+ and c.comune like 'Torino';</textarea>
+        <button></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>ESERCITAZIONE 7 - test geospaziali</h2>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+--ES 7
+select 
+ c.comune, count(*)
+from 
+  comuni AS c, localita AS l
+where 
+-- l.geom && c.geom and 
+st_intersects(c.geom,st_pointonsurface(l.geom)) 
+and c.cod_pro = 5  
+group by c.comune;</textarea>
+        <button></button>
+      </div>
+
+    </section>
+
+    <section class="slide">
+      <h2>Tipi geometrici</h2>
+      <img src="http://vos.openlinksw.com/owiki/wiki/VOS/VirtGeoSPARQLEnhancementDocs/VirtWktGeomerticObjects.png"/>
+    </section>
+
+    <section class="slide">
+      <h2>Visualizzazione in mappa</h2>
+      <p>Il risultato della query può essere visualizzato in mappa quando la tabella di output contiene un campo "geojson" contente le geometrie da visualizzare in formato <a href="http://geojson.org/">geojson:</a></p>
+      <p>Il formato geojson è l'espressione testuale di un'oggetto javascript prodotta secondo lo standard "json" ed è facilmente "digeribile" dalle applicazioni web</p>
+      <p>L'altra condizione perchè la geometria possa essere visualizzata correttamente nel visualizzatore è che il dato geografico deve essere espresso in gradi di latitudine e longitudine. Le tabelle predefinite sono nel formato ETRS89-epsg4258, sono quindi compatibili con il visualizzatore </p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT
+  AsGeoJSON(
+    ST_GeomFromText('LINESTRING(11 45,11 46,12 46,12 45, 11 45)')
+  ) AS geojson
+        </textarea>
+        <button></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>Condizioni topologiche</h2>
+      <p></p>
+      <img src="https://www.gaia-gis.it/spatialite-2.1/resource/mbrs.gif">
+      <p></p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT AsGeoJSON(geom) as geojson
+FROM comuni
+WHERE ST_Intersects(geom,ST_GeomFromText('POLYGON((11 45,11 46,12 46,12 45, 11 45))'))</textarea>
+        <button></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>Spatial JOIN</h2>
+      <p>L'unione di due tabelle è possibile quando una condizione di JOIN è soddisfatta. Se la condizione è basata su una relazione spaziale tra geometrie, si stabilisce un Join spaziale tra dati</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT comuni.provincia, centri.*
+FROM centri JOIN comuni ON ST_Within(centri.geom, comuni.geom)</textarea>
+        <button></button>
+      </div>
+      <p>Dall'unione delle tabelle potrebbe risultare dei risultati non univoci:</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT fiumi.NAMN1, comuni.*
+FROM comuni JOIN fiumi ON ST_Intersects(fiumi.geom, comuni.geom)</textarea>
+        <button></button>
+      </div>
+      <p>Sarà quindi opportuno raggruppare i risultati</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT fiumi.NAMN1, comuni.*
+FROM comuni JOIN fiumi ON ST_Intersects(fiumi.geom, comuni.geom)
+GROUP BY comuni.comune</textarea>
+        <button></button>
+      </div>
+      <p>E' da notare come in altri DBMS la calusola GROUP BY pretende che tutti i campi siano esplicitamente aggregati. SQlite implicitamente mette il primo risultato</p>
+    </section>
+
+    <section class="slide">
+      <h2>AGGREGAZIONE SPAZIALE</h2>
+      <p>Le funzioni spaziali possono essere usate per collezionare le geometrie aggregate da una query di raggruppamento</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT
+	provincia,
+  COUNT(comune) as num_comuni,
+  SUM(area_ha) as area_ha,
+  AVG(area_ha) as area_media,
+  AsGeoJSON(ST_union(geom)) as geojson
+FROM comuni
+GROUP BY provincia</textarea>
+        <button></button>
+      </div>
+      <p>L'intersezione tra geometrie lineari genera geometrie puntuali:</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT
+  asgeojson(st_intersection(fiumi.geom,ferrovie.geom)) as geojson,
+  fiumi.NAMN1,
+  ferrovie.NAMN1
+FROM fiumi, ferrovie
+WHERE st_intersects(fiumi.geom,ferrovie.geom)</textarea>
+        <button></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>MISURE, TRASFORMAZIONI E BUFFER</h2>
+      <p>E' possibile acquisire dati dimensionali delle geometrie inserite lunghezze, aree, distanze</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT comune,St_area(geom) AS superficie, St_length(geom) AS perimetro FROM comuni</textarea>
+        <button></button>
+      </div>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT NAMN1,St_length(geom) AS lunghezza FROM fiumi</textarea>
+        <button></button>
+      </div>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT NAMN1,St_distance(geom,ST_GeomFromText('POINT(11.89 45.4)')) AS dist_pd FROM centri</textarea>
+        <button></button>
+      </div>
+      <p>Essendo le geometrie espresse in latitudine e longitudine, I dati geometrici sono espressi in gradi. E' quindi necessario trasformare le coordinate in un sistema di riferimento proiettato per ottenere le corrette dimensioni in metri</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT NAMN1,St_length(st_transform(geom,3003)) AS lunghezza FROM fiumi</textarea>
+        <button></button>
+      </div>
+      <p>La funzione di buffer genera un poligono i cui vertici distano ad una distanza costante da una geometria generatrice</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT  asgeojson(st_buffer(fiumi.geom,0.03)) as geojson FROM fiumi</textarea>
+        <button></button>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h1>ELABORAZIONI</h1>
+    </section>
+
+    <section class="slide">
+      <h2>Quali sono i centri serviti dalla ferrovia?</h2>
+      <p>Individuazione di un buffer di 10 km dalla ferrovia</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT AsGeoJson(st_buffer(st_union(geom), 0.03)) AS geojson
+FROM ferrovie
+        </textarea>
+        <button></button>
+      </div>
+      <p>individuazione dei centri ricadenti nel buffer appena individuato</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT *,ASgeoJSON(geom) as geojson
+FROM centri
+WHERE st_intersects(geom, (
+    SELECT st_buffer(st_union(geom), 0.03)
+    FROM ferrovie
+))
+        </textarea>
+        <button></button>
+      </div>
+      <p>metodo alternativo meno performante ma che recupera i dati </p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT centri.NAMN1,st_distance(centri.geom,ferrovie.geom),ASgeoJSON(centri.geom) as geojson
+FROM centri JOIN ferrovie 
+	ON st_intersects(centri.geom, st_buffer(ferrovie.geom, 0.03))
+GROUP BY centri.NAMN1
+        </textarea>
+        <button></button>
+        <p>NB: i dati geografici sono espressi in latitudine e longitudine quindi la distanza di buffer va espressa in gradi (0.01 gradi corrispondono circa a 950 m)</p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <h2>Qual'è la popolazione dell'area metropolitana di Verona?</h2>
+      <p>Individuazione dei comuni limitrofi</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT comune, asgeojson(geom) as geojson
+FROM comuni 
+WHERE st_touches(geom, (
+  SELECT geom
+  FROM comuni
+  WHERE comune = 'Verona'
+))
+        </textarea>
+        <button></button>
+        <p>Usando st_intersects al posto di st_touches si include anche il comune stesso di Verona</p>
+      </div>
+      <p>Si può quindi raggruppare la tabella sommando la lunghezza di ogni arco</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT SUM(pop.pop_totale), asgeojson(st_union(geom)) as geojson
+FROM comuni JOIN pop on comuni.istat=pop.cod
+WHERE st_Touches(geom, (
+  SELECT geom
+  FROM comuni
+  WHERE comune = 'Verona'
+))
+GROUP BY provincia
+        </textarea>
+        <button></button>
+      </div>
+      <p>Nota bene: Questa query non funzionerebbe in postgis poichè nel caso di raggruppamento Postgresql richiede di specificare una funzione di aggregazione per ogni campo</p>
+    </section>
+
+    <section class="slide">
+      <h2>Quanto è lungo è il fiume bacchiglione?</h2>
+      <p>Individuazione del fiume: Trattandosi di un grafo idrologico, il fiume è individuato da una serie di archi:</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT  NAMN1,asgeojson(geom) as geojson 
+FROM fiumi 
+WHERE NAMN1 = 'Fiume Bacchiglione'
+        </textarea>
+        <button></button>
+      </div>
+      <p>Metodo 1: quindi si può raggruppare sommando la lunghezza di ugni arco</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT  
+	NAMN1, 		
+    st_length(st_transform(st_union(geom),3003)),
+    asgeojson(st_union(geom)) as geojson 
+FROM fiumi 
+WHERE NAMN1 = 'Fiume Bacchiglione'
+GROUP BY NAMN1
+        </textarea>
+        <button></button>
+      </div>
+      <p>Nota bene: Questa query non funzionerebbe in postgis poichè nel caso di raggruppamento Postgresql richiede di specificare una funzione di aggregazione per ogni campo</p>
+    </section>
+
+    <section class="slide">
+      <h2>Quanti e Quali comuni sono attraversati dal fiume Brenta?</h2>
+      <p>Metodo 1: con subquery</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT  *,asgeojson(geom) as geojson 
+FROM comuni 
+WHERE st_intersects(geom, (
+  SELECT st_union(geom)
+  FROM fiumi 
+  WHERE NAMN1 = 'Fiume Brenta'
+  GROUP BY NAMN1
+))
+        </textarea>
+        <button></button>
+      </div>
+      <p>Metodo 2: con join</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+SELECT  comuni.comune,asgeojson(comuni.geom) as geojson 
+FROM comuni
+JOIN fiumi ON st_intersects(comuni.geom, fiumi.geom)
+WHERE fiumi.NAMN1 = 'Fiume Brenta'
+GROUP BY comune
+        </textarea>
+        <button></button>
+      </div>
+      <p>Nota bene: Questa query non funzionerebbe in postgis poichè nel caso di raggruppamento Postgresql richiede di specificare una funzione di aggregazione per ogni campo</p>
+    </section>
+
+    <section class="slide">
+      <h1>QGIS</h1>
+    </section>
+
+    <section class="slide">
+      <h2>Spatialite in QGIS</h2>
+      <p>E' possibile replicare in ambiente QGIS le esercitazioni del workshop. In tal caso è necessario:  </p>
+      <ul>
+        <li>Scaricare in locale il database dell'esercitazione: <a href="https://github.com/enricofer/spatiasql.js/blob/gh-pages/data/veneto.sqlite?raw=true">veneto.sqlite</a></li>
+        <li>Stabilire una connessione con il database </li>
+        <li>Aprire DB MANAGER</li>
+        <li>Incollare le query nella finestra SQL ed aggiungerle in mappa</li>
+      </ul>
+      <img src="img/QGIS_spatialite.png"/>
+    </section>
+
+    <section class="slide">
+      <h2>Virtual layers in QGIS</h2>
+      <p>Un'altro modo per usare in modo produttivo le query geospaziali in QGIS sono i <a href="https://docs.qgis.org/2.14/it/docs/user_manual/working_with_vector/virtual_layers.html">Virtual Layers:</a></p>
+      <p>I virtual Layers sono una caratteristica poco nota ma molto potente di QGIS, e permettono di creare relazioni SQL tra i layer correntemente caricati da qualunque datasource. Il virtual layer viene rigenerato in modo automatico e trasparente ogni qualvolta vengono aggiornati i layers collegati al layer virtuale: </p>
+      <p>La funzionalità è resa possibile replicando i layers in un database Spatialite locale gestito direttamente da QGIS, dunque la sintassi da utilizzare nelle query è quella di Spatialite. Su questa funzionalità è disponibile un breve ma chiaro <a href="https://pigrecoinfinito.wordpress.com/2016/04/06/qgis-virtual-layer/">tutorial di Totò Fiandaca</a></p>
+
+      <img src="img/QGIS_virtual_layers.png"/>
+    </section>
+
+    <!-- End slides. -->
+
+    <!-- Begin extension snippets. Add or remove as needed. -->
+
+    <!-- deck.navigation snippet -->
+    <div aria-role="navigation">
+      <a href="#" class="deck-prev-link" title="Previous">&#8592;</a>
+      <a href="#" class="deck-next-link" title="Next">&#8594;</a>
+    </div>
+
+    <!-- deck.goto snippet -->
+    <form action="." method="get" class="goto-form">
+      <label for="goto-slide">Go to slide:</label>
+      <input type="text" name="slidenum" id="goto-slide" list="goto-datalist">
+      <datalist id="goto-datalist"></datalist>
+      <input type="submit" value="Go">
+    </form>
+
+    <p class="deck-status deck-progress-10">
+        <span class="deck-status-current"></span> / <span class="deck-status-total"></span> − <span class="var-venue">GFOSS 2021</span> − <span class="var-title">Introduzione ai database geospaziali</span>
+    </p>
+
+    <!-- End extension snippets. -->
+  </div>
+
+<!-- Required JS files. -->
+<script src="jquery.min.js"></script>
+<script src="core/deck.core.js"></script>
+
+<!-- Extension JS files. Add or remove as needed. -->
+<script src="extensions/menu/deck.menu.js"></script>
+<script src="extensions/goto/deck.goto.js"></script>
+<script src="extensions/status/deck.status.js"></script>
+<script src="extensions/navigation/deck.navigation.js"></script>
+<script src="extensions/scale/deck.scale.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.26.0/codemirror.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/keymap/sublime.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/mode/sql/sql.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/addon/scroll/simplescrollbars.min.js'></script>
+
+<!-- Initialize the deck. You can put this in an external file if desired. -->
+<script>
+
+
+
+  $(function() {
+    $.deck('.slide');
+  });
+
+  window.onload = function () {
+    var editors = {};
+    var sqlareas = document.getElementsByClassName('code');
+    for (var elem of sqlareas) {
+        var editor = CodeMirror.fromTextArea(elem, {
+            mode: 'text/x-sql',
+            keyMap: 'sublime',
+            //theme: 'neat',
+            viewportMargin: 0,
+            lineWrapping: true,
+            scrollbarStyle: "null",
+            addModeClass: true,
+            //readOnly: "nocursor"
+        });
+        editor.target = elem.getAttribute('target')
+        editors[elem.id] = editor
+        var button = elem.nextSibling.nextSibling.nextSibling;
+        console.log(button)
+        button.editor = editor;
+        button.addEventListener('click', function(event) {
+            var url = 'browse.html?wasm';
+            console.log(event.target.editor.getValue());
+            url += '&query='+event.target.editor.getValue();
+            if (event.target.editor.getValue().toLowerCase().includes('geojson')){
+                url += '&tab=m'
+            } else {
+                url += '&tab=t'
+            }
+            url += '&title=INTRODUZIONE AI DATABASE GEOSPAZIALI - WORKSHOP GFOSS 2021'
+            console.log(encodeURI(url));
+            var win = window.open(encodeURI(url), '_blank');
+            win.focus();
+        });
+    }
+    console.log(editors)
+}
+</script>
+</body>
+</html>

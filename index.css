@@ -1,0 +1,187 @@
+body {
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	font-family: monospace;
+	color: lightgrey;
+	background: hsl(185, 2%, 10%);
+}
+
+header {
+	height: 5em;
+	border-bottom: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: #333;
+	background: hsl(185, 2%, 10%);
+}
+
+#app {
+	width: 100%;
+	height: 100%;
+	margin: 5px;
+	display: flex;
+	flex-flow:column nowrap;
+}
+
+#main {
+	height: 100%;
+	display: flex;
+	flex-flow:row nowrap;
+}
+
+#control {
+	background: hsl(185, 2%, 10%);
+	min-width: 40%;
+	max-width: 40%;
+	height: 100%;
+	display: flex;
+	flex-flow: column nowrap;
+	padding: 0px;
+}
+
+#tabs {
+	min-width: 60%;
+	max-width: 60%;
+	min-height: 100%;
+	max-height: 100%;
+}
+
+#sql {
+	display: flex;
+	flex-flow: column nowrap;
+	height: 100%;
+}
+
+#map {
+	background: hsl(185, 2%, 10%);
+	width: 100%;
+	height: 100%;
+}
+
+#editor {
+	flex-grow: 1;
+	height: 100%;
+	margin: 10px;
+}
+
+#panel {
+	background: hsl(185, 2%, 10%);;
+	flex-flow: row;
+	align-items: center;
+	display: flex;
+	justify-content: space-between;
+	overflow: hidden;
+	min-height: 60px;
+	margin: 10px;
+}
+
+#panel > button, input[type="file"] {
+	margin-right: 10px;
+	white-space:nowrap;
+	font-family: monospace;
+}
+
+#time, #error, #numrows {
+	max-width: 120px;
+	background: hsl(185, 2%, 10%);;
+	flex: 1;
+	color: lightgrey;
+	text-align: center;
+    vertical-align: middle;
+    margin-right: 0px;
+	border: solid;
+	border-width: 2px;
+	border-color: #333;
+	font-size: 16px;
+	font-family: monospace;
+	border-radius: 2px;
+	white-space:nowrap;
+}
+
+#error {
+	color: #f92672;
+	border: 0;
+	margin-left: auto;
+	max-width: 100%;
+	text-align: center;
+}
+
+#time, #numrows {
+	border: 0;
+	color: #e6db74;
+	margin-left: auto;
+}
+
+#tbl {
+	overflow: auto;
+	max-height: 90%;
+	margin-right: 15px;
+}
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+td, th {
+	border: 1px solid #333;
+	text-align: left;
+	padding: 8px;
+	font-family: monospace;
+}
+
+#split-main {
+	min-width: 10px;
+	height: 100%;
+	background: #333;
+	cursor: col-resize;
+	border: solid;
+	border-width: 0;
+	border-left-width: 1px;
+	border-color: #444;
+}
+
+#split-ctrl {
+	min-height: 10px;
+	width: 100%;
+	background: #333;
+	cursor: row-resize;
+	border: solid;
+	border-width: 0;
+	border-top-width: 1px;
+	border-color: #444;
+}
+
+.CodeMirror {
+	font-size: 16px;
+	height: auto;
+}
+.CodeMirror-scroll {
+	background: hsl(185, 2%, 10%);
+}
+
+.CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
+	background: grey;
+	/*border-color: #444*/
+}
+.CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
+	background: hsl(185, 2%, 10%);
+}
+
+#title {
+	width: 100%;
+	text-align: left;
+	display: block;
+	font-family: sans-serif;
+	font-size: 30px;
+	margin: 16px;
+	color: #c00;
+	font-weight: bold;
+}
+#title > a {
+	text-decoration: underline;
+}
+title > a:hover {
+	text-decoration: underline;
+}
