@@ -382,7 +382,7 @@ where
         <textarea class="code" id='code' name='code'>
 --ES 7
 SELECT 
- c.comune, count(*)
+ c.comune, count(*), AsGeoJSON(c.geom) as geojson
 FROM 
   comuni AS c, localita AS l
 WHERE 
