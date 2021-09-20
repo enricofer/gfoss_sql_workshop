@@ -436,32 +436,6 @@ WHERE ST_Intersects(geom,ST_GeomFromText('POLYGON((7 45,8 45,8 44,7 44, 7 45))')
       </div>
     </section>
 
-    <section class="slide">
-      <h2>Spatial JOIN</h2>
-      <p>L'unione di due tabelle è possibile quando una condizione di JOIN è soddisfatta. Se la condizione è basata su una relazione spaziale tra geometrie, si stabilisce un Join spaziale tra dati</p>
-      <div class ='wrapper editor'>
-        <textarea class="code" id='code' name='code'>
-SELECT comuni.provincia, centri.*
-FROM centri JOIN comuni ON ST_Within(centri.geom, comuni.geom)</textarea>
-        <button></button>
-      </div>
-      <p>Dall'unione delle tabelle potrebbe risultare dei risultati non univoci:</p>
-      <div class ='wrapper editor'>
-        <textarea class="code" id='code' name='code'>
-SELECT fiumi.NAMN1, comuni.*
-FROM comuni JOIN fiumi ON ST_Intersects(fiumi.geom, comuni.geom)</textarea>
-        <button></button>
-      </div>
-      <p>Sarà quindi opportuno raggruppare i risultati</p>
-      <div class ='wrapper editor'>
-        <textarea class="code" id='code' name='code'>
-SELECT fiumi.NAMN1, comuni.*
-FROM comuni JOIN fiumi ON ST_Intersects(fiumi.geom, comuni.geom)
-GROUP BY comuni.comune</textarea>
-        <button></button>
-      </div>
-      <p>E' da notare come in altri DBMS la clausola GROUP BY pretende che tutti i campi siano esplicitamente aggregati. SQlite implicitamente mette il primo risultato</p>
-    </section>
 
     <section class="slide">
       <h2>AGGREGAZIONE SPAZIALE</h2>
@@ -595,13 +569,13 @@ WHERE st_intersects(geom, (
     </section>
 
     <section class="slide">
-      <h2>Quanto è lungo è il fiume bacchiglione?</h2>
+      <h2>Quanto è lungo Corso Francia?</h2>
       <p>Individuazione del fiume: Trattandosi di un grafo idrologico, il fiume è individuato da una serie di archi:</p>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT  NAMN1,asgeojson(geom) as geojson 
-FROM fiumi 
-WHERE NAMN1 = 'Fiume Bacchiglione'
+SELECT  name,asgeojson(geom) as geojson 
+FROM viab_princ 
+WHERE name = 'Corso Francia'
         </textarea>
         <button></button>
       </div>
@@ -609,12 +583,12 @@ WHERE NAMN1 = 'Fiume Bacchiglione'
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
 SELECT  
-	NAMN1, 		
+	name, 		
     st_length(st_transform(st_union(geom),3003)),
     asgeojson(st_union(geom)) as geojson 
-FROM fiumi 
-WHERE NAMN1 = 'Fiume Bacchiglione'
-GROUP BY NAMN1
+FROM viab_princ 
+WHERE name = 'Corso Francia'
+GROUP BY name
         </textarea>
         <button></button>
       </div>
