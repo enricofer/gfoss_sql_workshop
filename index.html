@@ -501,12 +501,12 @@ SELECT comune,St_area(geom) AS superficie, St_length(geom) AS perimetro FROM com
       </div>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT NAMN1,St_length(geom) AS lunghezza FROM fiumi</textarea>
+SELECT id,St_length(geom) AS lunghezza FROM padanasuperiore</textarea>
         <button></button>
       </div>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT NAMN1,St_distance(geom,ST_GeomFromText('POINT(11.89 45.4)')) AS dist_pd FROM centri</textarea>
+SELECT id,St_distance(geom,ST_GeomFromText('POINT(11.89 45.4)')) AS dist_pd FROM centri</textarea>
         <button></button>
       </div>
       <p>Essendo le geometrie espresse in latitudine e longitudine, I dati geometrici sono espressi in gradi. E' quindi necessario trasformare le coordinate in un sistema di riferimento proiettato per ottenere le corrette dimensioni in metri</p>
@@ -533,7 +533,7 @@ SELECT  asgeojson(st_buffer(fiumi.geom,0.03)) as geojson FROM fiumi</textarea>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
 SELECT AsGeoJson(st_buffer(st_union(geom), 0.03)) AS geojson
-FROM ferrovie
+FROM padanasuperiore
         </textarea>
         <button></button>
       </div>
@@ -541,10 +541,10 @@ FROM ferrovie
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
 SELECT *,ASgeoJSON(geom) as geojson
-FROM centri
+FROM comuni
 WHERE st_intersects(geom, (
     SELECT st_buffer(st_union(geom), 0.03)
-    FROM ferrovie
+    FROM padanasuperiore
 ))
         </textarea>
         <button></button>
