@@ -85,7 +85,10 @@
       <h2>INTRODUZIONE AI DATABASE GEOSPAZIALI</h2>
       <h2>https://enricofer.github.io/spatial_sql_workshop/</h2>
       <h3>FOSS4G Italia 2021</h3>
-      <p><a href="https://creativecommons.org/licenses/by-sa/3.0/it/">(C)2020 CC-BY-SA</a></br>Rocco Pispico r.pispico@gmail.com</br>Luca Lanteri lklanteri@gmail.com</br>Enrico Ferreguti enricofer@gmail.com</p>
+      <p><a href="https://creativecommons.org/licenses/by-sa/3.0/it/">(C)2021 CC-BY-SA</a></br>
+	  Enrico Ferreguti enricofer@gmail.com</br>
+	  Rocco Pispico r.pispico@gmail.com</br>
+	  Luca Lanteri lklanteri@gmail.com</br></p>
     </section>
 
     <section class="slide">
@@ -358,23 +361,12 @@ from
  (
 	SELECT 
 	  l.id, 
-	  ST_Centroid(l.geom) as geom,
-	  asgeojson(ST_Centroid(l.geom)) as geojson,
-	  l.loc2011 as codice_localita, 
-	  l.pro_com as codice_comune, 
-	  l.tipo_loc, 
-	  tl.descrizione as desc_tipo_localita,   
-	  l.denominazi as nome_localita,
-	  l.popres as popolazione_residente,
-	  l.maschi as maschi,
-	  l.popres - l.maschi as femmine,
-	  l.famiglie as numero_famiglie,
-	  l.abitazioni as numero_abitazioni,
-	  l.edifici as numero_edifici,
-	  l.shape_area as superficie_in_mq
+	  ST_Centroid(l.geom) as geom, asgeojson(ST_Centroid(l.geom)) as geojson,
+	  l.loc2011 as codice_localita, l.pro_com as codice_comune, l.tipo_loc, tl.descrizione as desc_tipo_localita, l.denominazi as nome_localita,
+	  l.popres as popolazione_residente, l.maschi as maschi, l.popres - l.maschi as femmine,
+	  l.famiglie as numero_famiglie, l.abitazioni as numero_abitazioni, l.edifici as numero_edifici, l.shape_area as superficie_in_mq
 	FROM 
-	  localita l, 
-	  tipo_localita tl
+	  localita l, tipo_localita tl
 	WHERE 
 	  --localita.tipo_loc = t1.tipo_loc;
 	  cast(l.tipo_loc as integer) = cast(tl.tipo_loc as integer)
@@ -477,7 +469,7 @@ FROM comuni JOIN fiumi ON ST_Intersects(fiumi.geom, comuni.geom)
 GROUP BY comuni.comune</textarea>
         <button></button>
       </div>
-      <p>E' da notare come in altri DBMS la calusola GROUP BY pretende che tutti i campi siano esplicitamente aggregati. SQlite implicitamente mette il primo risultato</p>
+      <p>E' da notare come in altri DBMS la clausola GROUP BY pretende che tutti i campi siano esplicitamente aggregati. SQlite implicitamente mette il primo risultato</p>
     </section>
 
     <section class="slide">
