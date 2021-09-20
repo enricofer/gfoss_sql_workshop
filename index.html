@@ -537,7 +537,7 @@ FROM padanasuperiore
         </textarea>
         <button></button>
       </div>
-      <p>individuazione dei centri ricadenti nel buffer appena individuato</p>
+      <p>individuazione dei comuni ricadenti nel buffer appena individuato</p>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
 SELECT *,ASgeoJSON(geom) as geojson
@@ -552,10 +552,10 @@ WHERE st_intersects(geom, (
       <p>metodo alternativo meno performante ma che recupera i dati </p>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT centri.NAMN1,st_distance(centri.geom,ferrovie.geom),ASgeoJSON(centri.geom) as geojson
-FROM centri JOIN ferrovie 
-	ON st_intersects(centri.geom, st_buffer(ferrovie.geom, 0.03))
-GROUP BY centri.NAMN1
+SELECT comuni.comune,st_distance(comuni.geom,padanasuperiore.geom),ASgeoJSON(comuni.geom) as geojson
+FROM comuni JOIN padanasuperiore 
+	ON st_intersects(comuni.geom, st_buffer(padanasuperiore.geom, 0.03))
+GROUP BY comuni.comune
         </textarea>
         <button></button>
         <p>NB: i dati geografici sono espressi in latitudine e longitudine quindi la distanza di buffer va espressa in gradi (0.01 gradi corrispondono circa a 950 m)</p>
@@ -563,7 +563,7 @@ GROUP BY centri.NAMN1
     </section>
 
     <section class="slide">
-      <h2>Qual'è la popolazione dell'area metropolitana di Verona?</h2>
+      <h2>Qual'è la popolazione dell'area metropolitana di Torino?</h2>
       <p>Individuazione dei comuni limitrofi</p>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
@@ -572,11 +572,11 @@ FROM comuni
 WHERE st_touches(geom, (
   SELECT geom
   FROM comuni
-  WHERE comune = 'Verona'
+  WHERE comune = 'Torino'
 ))
         </textarea>
         <button></button>
-        <p>Usando st_intersects al posto di st_touches si include anche il comune stesso di Verona</p>
+        <p>Usando st_intersects al posto di st_touches si include anche il comune stesso di Torino</p>
       </div>
       <p>Si può quindi raggruppare la tabella sommando la lunghezza di ogni arco</p>
       <div class ='wrapper editor'>
