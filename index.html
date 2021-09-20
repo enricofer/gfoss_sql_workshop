@@ -578,21 +578,18 @@ WHERE st_touches(geom, (
         <button></button>
         <p>Usando st_intersects al posto di st_touches si include anche il comune stesso di Torino</p>
       </div>
-      <p>Si può quindi raggruppare la tabella sommando la lunghezza di ogni arco</p>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT SUM(pop.pop_totale), asgeojson(st_union(geom)) as geojson
-FROM comuni JOIN pop on comuni.istat=pop.cod
-WHERE st_Touches(geom, (
+SELECT comune, asgeojson(geom) as geojson
+FROM comuni 
+WHERE st_intersects(geom, (
   SELECT geom
   FROM comuni
-  WHERE comune = 'Verona'
+  WHERE comune = 'Torino'
 ))
-GROUP BY provincia
         </textarea>
         <button></button>
       </div>
-      <p>Nota bene: Questa query non funzionerebbe in postgis poichè nel caso di raggruppamento Postgresql richiede di specificare una funzione di aggregazione per ogni campo</p>
     </section>
 
     <section class="slide">
