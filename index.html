@@ -180,7 +180,7 @@ UPDATE tab SET campo1 = 'valore2' WHERE id = 1;
       <h2>I dati dell’esercitazione</h2>
 	  <p>
 		Dati ISTAT (http://www.istat.it/it/archivio/104317)</br>
-<p>
+</br>
 		Limiti provinciali del Piemonte (province poligonale)</br>
 		Località abitate (localita poligonale)</br>
 		Tabella TIPO_LOC Tipologia di località 2001/2011. (tipo_localita.csv)</br>
@@ -190,7 +190,8 @@ UPDATE tab SET campo1 = 'valore2' WHERE id = 1;
 		3. località produttiva</br>
 		4. case sparse</br>
 		</br>
-		<p>Da Geoportale Regione Piemonte (http://www.geoportale.piemonte.it/cms/)</br>
+		Da Geoportale Regione Piemonte (http://www.geoportale.piemonte.it/cms/)</br>
+</br>
 		Limiti amministrativi comunali (comuni poligonale)</br>
 		Una selezione della viabilità principale (autostrade lineare)</br>
 		
@@ -263,7 +264,8 @@ LIMIT 10
 	    Elenco delle tavole, anche in questo caso è possibile indicare un ALIAS.
 	    Indicare la clausola di JOIN tra le due tabelle.    
 	    </p>
-	    <p>Durante la fase di test è consigliato impostare un limite massimo di risultati con la clausola: <b>Limit <numero di valori desiderati></b> ad esempio <b>Limit 10</b>
+	    <p>Durante la fase di test è consigliato impostare un limite massimo di risultati con la clausola: <b>Limit <numero di valori desiderati></b> 
+		    </br>    ad esempio <b>Limit 10</b>
 	    </p>
     </section>
 
@@ -320,11 +322,7 @@ SELECT
   l.denominazi as nome_localita,
   l.popres as popolazione_residente,
   l.maschi as maschi,
-  l.popres - l.maschi as femmine,
-  l.famiglie as numero_famiglie,
-  l.abitazioni as numero_abitazioni,
-  l.edifici as numero_edifici,
-  l.shape_area as superficie_in_mq
+  l.popres - l.maschi as femmine
 FROM 
   localita l, 
   tipo_localita tl
@@ -334,6 +332,8 @@ WHERE
 LIMIT 10;</textarea>
         <button></button>
       </div>
+	    In questa query utilizziamo la funzione ST_Centroid per trasformare un elemeno poligonale in puntuale. 
+	    Esiste anche la funzione ST_pointonsurface che restituisce un punto interno alla geometria. 
       </section>
 
     <section class="slide">
@@ -379,6 +379,7 @@ where
  and c.comune like 'Torino';</textarea>
         <button></button>
       </div>
+	    In questa query facciamo dei calcoli: deriviamo il numero di femmine come sottrazione tra la popolazione totale e i maschi.
     </section>
 
     <section class="slide">
