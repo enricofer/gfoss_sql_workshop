@@ -506,19 +506,21 @@ SELECT id,St_length(geom) AS lunghezza FROM padanasuperiore</textarea>
       </div>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT id,St_distance(geom,ST_GeomFromText('POINT(11.89 45.4)')) AS dist_pd FROM centri</textarea>
+SELECT id,St_distance(geom,ST_GeomFromText('POINT(7 45)')) AS dist_pd FROM centri</textarea>
         <button></button>
       </div>
       <p>Essendo le geometrie espresse in latitudine e longitudine, I dati geometrici sono espressi in gradi. E' quindi necessario trasformare le coordinate in un sistema di riferimento proiettato per ottenere le corrette dimensioni in metri</p>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT NAMN1,St_length(st_transform(geom,3003)) AS lunghezza FROM fiumi</textarea>
+SELECT id,name,St_length(st_transform(geom,3003)) AS lunghezza FROM viab_princ
+limit 10</textarea>
         <button></button>
       </div>
       <p>La funzione di buffer genera un poligono i cui vertici distano ad una distanza costante da una geometria generatrice</p>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT  asgeojson(st_buffer(fiumi.geom,0.03)) as geojson FROM fiumi</textarea>
+SELECT  asgeojson(st_buffer(viab_princ.geom,0.03)) as geojson FROM viab_princ
+limit 10</textarea>
         <button></button>
       </div>
     </section>
