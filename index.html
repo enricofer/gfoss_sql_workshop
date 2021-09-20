@@ -87,8 +87,8 @@
       <h3>FOSS4G Italia 2021</h3>
       <p><a href="https://creativecommons.org/licenses/by-sa/3.0/it/">(C)2021 CC-BY-SA</a></br>
 	  Enrico Ferreguti enricofer@gmail.com</br>
-	  Rocco Pispico r.pispico@gmail.com</br>
-	  Luca Lanteri lklanteri@gmail.com</br></p>
+	  Luca Lanteri lklanteri@gmail.com</br>
+	  Rocco Pispico r.pispico@gmail.com</br></p>
     </section>
 
     <section class="slide">
@@ -362,7 +362,8 @@ from
 	SELECT 
 	  l.id, 
 	  ST_Centroid(l.geom) as geom, asgeojson(ST_Centroid(l.geom)) as geojson,
-	  l.loc2011 as codice_localita, l.pro_com as codice_comune, l.tipo_loc, tl.descrizione as desc_tipo_localita, l.denominazi as nome_localita,
+	  l.loc2011 as codice_localita, l.pro_com as codice_comune, l.tipo_loc, tl.descrizione as desc_tipo_localita, 
+	  l.denominazi as nome_localita,
 	  l.popres as popolazione_residente, l.maschi as maschi, l.popres - l.maschi as femmine,
 	  l.famiglie as numero_famiglie, l.abitazioni as numero_abitazioni, l.edifici as numero_edifici, l.shape_area as superficie_in_mq
 	FROM 
