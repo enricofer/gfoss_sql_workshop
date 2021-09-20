@@ -326,7 +326,7 @@ FROM
 WHERE 
   --localita.tipo_loc = t1.tipo_loc;
   cast(l.tipo_loc as integer) = cast(tl.tipo_loc as integer)
-  limit 10;</textarea>
+LIMIT 10;</textarea>
         <button></button>
       </div>
       </section>
@@ -396,12 +396,25 @@ select
 from 
   comuni AS c, localita AS l
 where 
--- l.geom && c.geom and 
 st_intersects(c.geom,st_pointonsurface(l.geom)) 
 and c.cod_pro = 5  
 group by c.comune;</textarea>
         <button></button>
-      </div>
+	</div>
+	<p>Se la query viene eseguita in un database POSTGIS è opportuno far precedere un test sul bounding box delle geometrie, in modo da escludere da subito le geometrie lontane tra loro</p>
+      <div class ='wrapper editor'>
+        <textarea class="code" id='code' name='code'>
+--ES 7 (query POSTGIS non eseguibile localamente)
+select 
+ c.comune, count(*)
+from 
+  comuni AS c, localita AS l
+where 
+l.geom && c.geom and 
+st_intersects(c.geom,st_pointonsurface(l.geom)) 
+and c.cod_pro = 5  
+group by c.comune;</textarea>
+	</div>
 
     </section>
 
