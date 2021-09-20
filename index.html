@@ -387,31 +387,22 @@ where
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
 --ES 7
-select 
+SELECT 
  c.comune, count(*)
-from 
+FROM 
   comuni AS c, localita AS l
-where 
-st_intersects(c.geom,st_pointonsurface(l.geom)) 
-and c.cod_pro = 5  
-group by c.comune;</textarea>
+WHERE 
+c.cod_pro = 5 
+st_intersects(st_envelope(c.geom),st_envelope(l.geom)) and
+st_intersects(c.geom,st_centroid(l.geom)) 
+GROUP BY c.comune;</textarea>
         <button></button>
 	</div>
-	<p>Se la query viene eseguita in un database POSTGIS è opportuno far precedere un test sul bounding box delle geometrie, in modo da escludere da subito le geometrie lontane tra loro</p>
-      <div class ='wrapper editor'>
-        <textarea class="code" id='code' name='code'>
---ES 7 (query POSTGIS non eseguibile localamente)
-select 
- c.comune, count(*)
-from 
-  comuni AS c, localita AS l
-where 
-l.geom && c.geom and 
-st_intersects(c.geom,st_pointonsurface(l.geom)) 
-and c.cod_pro = 5  
-group by c.comune;</textarea>
-	</div>
-
+	<p>In questa query viene calcolato il numero di località presente in ogni comune. 
+	Dato che l'operazione viene fatta sulla combinazione dei dati di due tabelle (record tabella1 x record tabella2), 
+	il numero di dati su cui si va ad operare è enorme, quindi è opportuno restringere il campo di ricerca inserendo delle condizioni in WHERE</p>
+	<p>In tutti i database la valutazione delle condizioni WHERE si dice che è "lazy" ovvero alla prima condizione false si tralascia la valutazione delle restanti condizioni</p>
+	<p>Quindi prima restringiamo la ricerca ad un codica provincia, poi valutiamo se le estensioni delle geometrie coincidono e solo allora andremo ad effettuare il test sull'intersezione tra geometrie che è molto pesante dal punto di vista computazionale</p>
     </section>
 
     <section class="slide">
