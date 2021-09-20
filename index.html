@@ -413,7 +413,7 @@ GROUP BY c.comune;</textarea>
         <textarea class="code" id='code' name='code'>
 SELECT
   AsGeoJSON(
-    ST_GeomFromText('LINESTRING(11 45,11 46,12 46,12 45, 11 45)')
+    ST_GeomFromText('LINESTRING(7 45,8 45,8 44,7 44, 7 45)')
   ) AS geojson
         </textarea>
         <button></button>
@@ -427,9 +427,11 @@ SELECT
       <p></p>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
-SELECT AsGeoJSON(geom) as geojson
+SELECT 
+	comuni.comune,
+	AsGeoJSON(geom) as geojson
 FROM comuni
-WHERE ST_Intersects(geom,ST_GeomFromText('POLYGON((7 45,7 46,8 46,8 45, 7 45))'))</textarea>
+WHERE ST_Intersects(geom,ST_GeomFromText('POLYGON((7 45,8 45,8 44,7 44, 7 45))'))</textarea>
         <button></button>
       </div>
     </section>
