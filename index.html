@@ -469,13 +469,13 @@ GROUP BY comuni.comune</textarea>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
 SELECT
-	provincia,
+	cod_pro,
   COUNT(comune) as num_comuni,
-  SUM(area_ha) as area_ha,
-  AVG(area_ha) as area_media,
+  SUM(shape_area)/10000 as area_ha,
+  AVG(shape_area)/10000 as area_media,
   AsGeoJSON(ST_union(geom)) as geojson
 FROM comuni
-GROUP BY provincia</textarea>
+GROUP BY cod_pro</textarea>
         <button></button>
       </div>
       <p>L'intersezione tra geometrie lineari genera geometrie puntuali:</p>
