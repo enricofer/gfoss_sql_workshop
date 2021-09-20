@@ -595,35 +595,6 @@ GROUP BY name
       <p>Nota bene: Questa query non funzionerebbe in postgis poichè nel caso di raggruppamento Postgresql richiede di specificare una funzione di aggregazione per ogni campo</p>
     </section>
 
-    <section class="slide">
-      <h2>Quanti e Quali comuni sono attraversati dal fiume Brenta?</h2>
-      <p>Metodo 1: con subquery</p>
-      <div class ='wrapper editor'>
-        <textarea class="code" id='code' name='code'>
-SELECT  *,asgeojson(geom) as geojson 
-FROM comuni 
-WHERE st_intersects(geom, (
-  SELECT st_union(geom)
-  FROM fiumi 
-  WHERE NAMN1 = 'Fiume Brenta'
-  GROUP BY NAMN1
-))
-        </textarea>
-        <button></button>
-      </div>
-      <p>Metodo 2: con join</p>
-      <div class ='wrapper editor'>
-        <textarea class="code" id='code' name='code'>
-SELECT  comuni.comune,asgeojson(comuni.geom) as geojson 
-FROM comuni
-JOIN fiumi ON st_intersects(comuni.geom, fiumi.geom)
-WHERE fiumi.NAMN1 = 'Fiume Brenta'
-GROUP BY comune
-        </textarea>
-        <button></button>
-      </div>
-      <p>Nota bene: Questa query non funzionerebbe in postgis poichè nel caso di raggruppamento Postgresql richiede di specificare una funzione di aggregazione per ogni campo</p>
-    </section>
 
     <section class="slide">
       <h1>QGIS</h1>
