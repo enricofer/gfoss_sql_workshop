@@ -179,7 +179,8 @@ UPDATE tab SET campo1 = 'valore2' WHERE id = 1;
     <section class="slide">
       <h2>I dati dell’esercitazione</h2>
 	  <p>
-		<b>Dati ISTAT (http://www.istat.it/it/archivio/104317)</b></br>
+		Dati ISTAT (http://www.istat.it/it/archivio/104317)</br>
+<p>
 		Limiti provinciali del Piemonte (province poligonale)</br>
 		Località abitate (localita poligonale)</br>
 		Tabella TIPO_LOC Tipologia di località 2001/2011. (tipo_localita.csv)</br>
@@ -189,7 +190,7 @@ UPDATE tab SET campo1 = 'valore2' WHERE id = 1;
 		3. località produttiva</br>
 		4. case sparse</br>
 		</br>
-		<b>Da Geoportale Regione Piemonte (http://www.geoportale.piemonte.it/cms/)</b></br>
+		<p>Da Geoportale Regione Piemonte (http://www.geoportale.piemonte.it/cms/)</br>
 		Limiti amministrativi comunali (comuni poligonale)</br>
 		Una selezione della viabilità principale (autostrade lineare)</br>
 		
@@ -252,7 +253,6 @@ FROM
   localita, 
   tipo_localita as t1
 WHERE 
-  --cast(localita.tipo_loc as integer) = cast(t1.tipo_loc as integer)
   localita.tipo_loc = t1.tipo_loc
   --and popres > 20000
 LIMIT 10
@@ -263,7 +263,7 @@ LIMIT 10
 	    Elenco delle tavole, anche in questo caso è possibile indicare un ALIAS.
 	    Indicare la clausola di JOIN tra le due tabelle.    
 	    </p>
-	    <p>Durante la fase di test è consigliato impostare un limite massimo di risultati con la clausola: Limit <numero di valori desiderati> ad esempio Limit 10
+	    <p>Durante la fase di test è consigliato impostare un limite massimo di risultati con la clausola: <b>Limit <numero di valori desiderati></b> ad esempio <b>Limit 10</b>
 	    </p>
     </section>
 
