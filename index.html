@@ -191,7 +191,6 @@ UPDATE tab SET campo1 = 'valore2' WHERE id = 1;
 		4. case sparse</br>
 		</br>
 		Da Geoportale Regione Piemonte (http://www.geoportale.piemonte.it/cms/)</br>
-</br>
 		Limiti amministrativi comunali (comuni poligonale)</br>
 		Una selezione della viabilità principale (autostrade lineare)</br>
 		
@@ -264,8 +263,8 @@ LIMIT 10
 	    Elenco delle tavole, anche in questo caso è possibile indicare un ALIAS.
 	    Indicare la clausola di JOIN tra le due tabelle.    
 	    </p>
-	    <p>Durante la fase di test è consigliato impostare un limite massimo di risultati con la clausola: <b>Limit <numero di valori desiderati></b> 
-		    </br>    ad esempio <b>Limit 10</b>
+	    <p>Durante la fase di test è consigliato impostare un limite massimo di risultati con la clausola: Limit <numero di valori desiderati> 
+		    </br>    ad esempio: Limit 10</b>
 	    </p>
     </section>
 
@@ -313,27 +312,22 @@ FROM localita</textarea>
 --ES 4
 SELECT 
   l.id, 
-  ST_Centroid(l.geom) as geom,
-  asgeojson(ST_Centroid(l.geom)) as geojson,
-  l.loc2011 as codice_localita, 
-  l.pro_com as codice_comune, 
-  l.tipo_loc, 
-  tl.descrizione as desc_tipo_localita,   
-  l.denominazi as nome_localita,
-  l.popres as popolazione_residente,
-  l.maschi as maschi,
+  ST_Centroid(l.geom) as geom,  asgeojson(ST_Centroid(l.geom)) as geojson,
+  l.loc2011 as codice_localita,   l.pro_com as codice_comune,   l.tipo_loc, 
+  tl.descrizione as desc_tipo_localita,     l.denominazi as nome_localita,
+  l.popres as popolazione_residente,  l.maschi as maschi,
   l.popres - l.maschi as femmine
 FROM 
-  localita l, 
-  tipo_localita tl
+  localita l,   tipo_localita tl
 WHERE 
   --localita.tipo_loc = t1.tipo_loc;
   cast(l.tipo_loc as integer) = cast(tl.tipo_loc as integer)
-LIMIT 10;</textarea>
+LIMIT 10;
+	      </textarea>
         <button></button>
       </div>
-	    In questa query utilizziamo la funzione ST_Centroid per trasformare un elemeno poligonale in puntuale. 
-	    Esiste anche la funzione ST_pointonsurface che restituisce un punto interno alla geometria. 
+	    In questa query utilizziamo la funzione ST_Centroid per trasformare un elemento poligonale in puntuale. 
+	    Esiste anche la funzione ST_Pointonsurface che restituisce un punto interno alla geometria. 
       </section>
 
     <section class="slide">
