@@ -482,11 +482,11 @@ GROUP BY cod_pro</textarea>
       <div class ='wrapper editor'>
         <textarea class="code" id='code' name='code'>
 SELECT
-  asgeojson(st_intersection(fiumi.geom,ferrovie.geom)) as geojson,
-  fiumi.NAMN1,
-  ferrovie.NAMN1
-FROM fiumi, ferrovie
-WHERE st_intersects(fiumi.geom,ferrovie.geom)</textarea>
+  asgeojson(st_intersection(viab_princ.geom,padanasuperiore.geom)) as geojson,
+  viab_princ.id,
+  padanasuperiore.id
+FROM viab_princ, padanasuperiore
+WHERE st_intersects(viab_princ.geom,padanasuperiore.geom)</textarea>
         <button></button>
       </div>
     </section>
