@@ -386,7 +386,7 @@ SELECT
 FROM 
   comuni AS c, localita AS l
 WHERE 
-c.cod_pro = 5 
+c.cod_pro = 5 and
 st_intersects(st_envelope(c.geom),st_envelope(l.geom)) and
 st_intersects(c.geom,st_centroid(l.geom)) 
 GROUP BY c.comune;</textarea>
@@ -396,7 +396,7 @@ GROUP BY c.comune;</textarea>
 	Dato che l'operazione viene fatta sulla combinazione dei dati di due tabelle (record tabella1 x record tabella2), 
 	il numero di dati su cui si va ad operare è enorme, quindi è opportuno restringere il campo di ricerca inserendo delle condizioni in WHERE</p>
 	<p>In tutti i database la valutazione delle condizioni WHERE si dice che è "lazy" ovvero alla prima condizione false si tralascia la valutazione delle restanti condizioni</p>
-	<p>Quindi prima restringiamo la ricerca ad un codica provincia, poi valutiamo se le estensioni delle geometrie coincidono e solo allora andremo ad effettuare il test sull'intersezione tra geometrie che è molto pesante dal punto di vista computazionale</p>
+	<p>Quindi prima restringiamo la ricerca ad un codica provincia, poi valutiamo se le estensioni delle geometrie coincidono con <strong>st_envelope</strong> e solo allora andremo ad effettuare il test sull'intersezione tra geometrie con <strong>st_intersects</strong> che è una funzione molto pesante dal punto di vista computazionale</p>
     </section>
 
     <section class="slide">
