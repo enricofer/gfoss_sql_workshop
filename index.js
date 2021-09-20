@@ -175,7 +175,10 @@ window.onload = function () {
 	worker.onerror = function (evt) {
 		document.getElementById('error').innerHTML = evt.message;
 		timer.stop();
+		document.getElementById('run').style.display = "block"
+		document.getElementById('terminate').style.display = "none"
 	};
+	
 	worker.onmessage = function (evt) {
 		console.log(evt)
 		if (evt.data.initialized) {
@@ -211,6 +214,8 @@ window.onload = function () {
 			if (Array.isArray(evt.data.results)) {
 				timer.stop();
 				renderdata(evt.data.results[0]);
+				document.getElementById('run').style.display = "block"
+				document.getElementById('terminate').style.display = "none"
 			}
 		}
 	};
@@ -225,7 +230,16 @@ window.onload = function () {
 				action: 'exec',
 				sql: sql
 			});
+			document.getElementById('terminate').style.display = "block"
+			document.getElementById('run').style.display = "none"
 		}
+	});
+
+	document.getElementById('terminate').addEventListener('click', function (evt) {
+		worker.terminate()
+		timer.stop()
+		document.getElementById('run').style.display = "block"
+		document.getElementById('terminate').style.display = "none"
 	});
 
 	function draw (res) {
